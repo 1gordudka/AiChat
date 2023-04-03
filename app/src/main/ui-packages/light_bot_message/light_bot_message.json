@@ -1,0 +1,153 @@
+{
+  "name": "light_bot_message",
+  "version": 32,
+  "source-key": {
+    "type": "figma",
+    "file": "3gjS0buHCbYr24Rr5LNn0C",
+    "node": "27:6",
+    "version": "3126817677",
+    "component-id": "ca84e17233220e24f35d06682a48f0171cc9c230"
+  },
+  "default": "LightBotMessage",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 1"
+      },
+      {
+        "type": "text",
+        "id": "15.38"
+      },
+      {
+        "type": "text",
+        "id": "Текст сообщения чат - бота"
+      }
+    ],
+    "modes": {
+      "LightBotMessage": {
+        "rules": [
+          {
+            "id": "top_level",
+            "is-structured": "false",
+            "children": [
+              "Rectangle 1",
+              "15.38",
+              "Текст сообщения чат - бота"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Rectangle 1",
+            "border-radius": "21.0",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "rectangle_1.svg"
+          },
+          {
+            "id": "15.38",
+            "margin": {
+              "left": "173.0",
+              "top": "68.0",
+              "right": "20.0",
+              "bottom": "8.0"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "font-weight": "500.0",
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "0.08235294117647059"
+            },
+            "text-content": "$timeText",
+            "overflow": "visible",
+            "text-align": "left",
+            "line-height": "1.171875"
+          },
+          {
+            "id": "Текст сообщения чат - бота",
+            "margin": {
+              "left": "20.0",
+              "top": "24.0",
+              "right": "64.0",
+              "bottom": "28.0"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "font-weight": "500.0",
+            "color": {
+              "alpha": "1.0",
+              "hue": "0.0",
+              "saturation": "0.0",
+              "value": "1.0"
+            },
+            "text-content": "$messageText",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": "17.0",
+            "line-height": "1.171875"
+          }
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "timeText": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    },
+    "messageText": {
+      "data-type": "text",
+      "required": false,
+      "description": ""
+    }
+  },
+  "previews": [
+    {
+      "design": "LightBotMessage",
+      "size": {
+        "width": 229.0,
+        "height": 92.0
+      },
+      "parameters": {
+        "timeText": "15.38",
+        "messageText": "Текст сообщения \nчат - бота"
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}

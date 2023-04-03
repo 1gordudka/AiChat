@@ -1,0 +1,135 @@
+{
+  "name": "delete_button",
+  "version": 32,
+  "source-key": {
+    "type": "figma",
+    "file": "3gjS0buHCbYr24Rr5LNn0C",
+    "node": "27:18",
+    "version": "3126817677",
+    "component-id": "6411488318d7623f05ce6eb9767541e15d6d8253"
+  },
+  "default": "DeleteButton",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 5"
+      },
+      {
+        "type": "group",
+        "id": "delete"
+      },
+      {
+        "type": "vector",
+        "id": "Bounding box"
+      },
+      {
+        "type": "vector",
+        "id": "delete1"
+      }
+    ],
+    "modes": {
+      "DeleteButton": {
+        "rules": [
+          {
+            "id": "top_level",
+            "tap-handler": "$onDelete",
+            "is-structured": "false",
+            "children": [
+              "Rectangle 5",
+              "delete"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Rectangle 5",
+            "border-radius": "11.0",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "rectangle_5.svg"
+          },
+          {
+            "id": "delete",
+            "margin": {
+              "left": "5.162792205810547",
+              "top": "5.16278076171875",
+              "right": "6.02325439453125",
+              "bottom": "6.02325439453125"
+            },
+            "is-structured": "false",
+            "children": [
+              "Bounding box",
+              "delete1"
+            ],
+            "clip-content": "false"
+          },
+          {
+            "id": "Bounding box",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            }
+          },
+          {
+            "id": "delete1",
+            "margin": {
+              "left": "3.4956398010253906",
+              "top": "2.2049560546875",
+              "right": "3.4418563842773438",
+              "bottom": "2.36627197265625"
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": "1.0"
+              }
+            },
+            "vector-content": "delete.svg"
+          }
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "onDelete": {
+      "data-type": "void-callback",
+      "required": false,
+      "description": ""
+    }
+  },
+  "previews": [
+    {
+      "design": "DeleteButton",
+      "size": {
+        "width": 37.0,
+        "height": 37.0
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">my love</string>
+    <string name="chat">Чат</string>
+    <string name="settings">Настройки</string>
+    <string name="dark_theme">Темная тема</string>
+    <string name="love">Любовь</string>
+    <string name="message">Сообщение</string>
+    <string name="writting">Печатает…</string>
+    <string name="delete">Ты точно хочешь удалить все сообщения?</string>
+    <string name="logout">Выйти</string>
+</resources>
