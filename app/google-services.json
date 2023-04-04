@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "814724958128",
-    "project_id": "my-love-cbbf9",
-    "storage_bucket": "my-love-cbbf9.appspot.com"
+    "project_number": "98927386330",
+    "project_id": "ai-chat-f5ed7",
+    "storage_bucket": "ai-chat-f5ed7.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:814724958128:android:8d9152df9950f3753ab875",
+        "mobilesdk_app_id": "1:98927386330:android:2fe1e5876040815df6cfe3",
         "android_client_info": {
-          "package_name": "com.igordudka.mylove"
+          "package_name": "com.igordudka.aichat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "814724958128-segaik11cjvp4he04orl4p3njun4e586.apps.googleusercontent.com",
+          "client_id": "98927386330-fkse7bjrfq5hfmic3q48tusi7t6il6o9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCUoPtRPbAeuspapmTAGDtMjRfRIUTQUVA"
+          "current_key": "AIzaSyAJQ7jL4STOc2bdG2069IoGNDJ-tY68X3g"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "814724958128-segaik11cjvp4he04orl4p3njun4e586.apps.googleusercontent.com",
+              "client_id": "98927386330-fkse7bjrfq5hfmic3q48tusi7t6il6o9.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

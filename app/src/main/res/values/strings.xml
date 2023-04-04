@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">my love</string>
+    <string name="app_name">Ai Chat</string>
     <string name="chat">Чат</string>
     <string name="settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
@@ -8,4 +8,5 @@
     <string name="writting">Печатает…</string>
     <string name="delete">Ты точно хочешь удалить все сообщения?</string>
     <string name="logout">Выйти</string>
+    <string name="as_system">Как в системе</string>
 </resources>
