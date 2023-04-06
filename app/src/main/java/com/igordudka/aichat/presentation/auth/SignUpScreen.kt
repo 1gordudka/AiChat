@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.igordudka.aichat.presentation.home.settings.SettingsViewModel
 import com.igordudka.aichat.ui.theme.darkColorThemes
 import com.igordudka.aichat.ui.theme.lightColorThemes
@@ -47,8 +48,10 @@ fun SignUpScreen(
     goToLogin: () -> Unit
 ) {
 
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setNavigationBarColor(MaterialTheme.colorScheme.background)
     val loginUiState = loginViewModel.loginUiState
-    val colorPalette = if (settingsViewModel.isDarkTheme.collectAsState().value == true) lightColorThemes else darkColorThemes
+    val colorPalette = if (settingsViewModel.isDarkTheme.collectAsState().value == true) darkColorThemes else lightColorThemes
     val isError = loginUiState.signUpError != null
     val context = LocalContext.current
 
@@ -85,21 +88,21 @@ fun SignUpScreen(
                             )
                         )
                         .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "регистрация", color = MaterialTheme.colorScheme.background,
+                    Text(text = "регистрация", color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(top = 20.dp))
                     Spacer(modifier = Modifier.height(30.dp))
                     OutlinedTextField(value = loginUiState.userNameSignup, onValueChange = {loginViewModel.onUserNameChangeSignup(it)},
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = MaterialTheme.colorScheme.background,
-                            cursorColor = MaterialTheme.colorScheme.background,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.surface,
-                            focusedBorderColor = MaterialTheme.colorScheme.background,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.surface,
-                            focusedLabelColor = MaterialTheme.colorScheme.background
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            cursorColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                            focusedLabelColor = MaterialTheme.colorScheme.onBackground
                         ),
                         label = { Icon(imageVector = Icons.Rounded.Email, contentDescription = null) },
-                        placeholder = { Text(text = "Email", color = MaterialTheme.colorScheme.surface) },
+                        placeholder = { Text(text = "Email", color = MaterialTheme.colorScheme.onBackground) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
@@ -110,15 +113,15 @@ fun SignUpScreen(
                     Spacer(modifier = Modifier.height(15.dp))
                     OutlinedTextField(value = loginUiState.passwordSignUp, onValueChange = {loginViewModel.onPasswordChangeSignup(it)},
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = MaterialTheme.colorScheme.background,
-                            cursorColor = MaterialTheme.colorScheme.background,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.surface,
-                            focusedBorderColor = MaterialTheme.colorScheme.background,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.surface,
-                            focusedLabelColor = MaterialTheme.colorScheme.background
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            cursorColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                            focusedLabelColor = MaterialTheme.colorScheme.onBackground
                         ),
                         label = { Icon(imageVector = Icons.Rounded.Lock, contentDescription = null) },
-                        placeholder = { Text(text = "Пароль", color = MaterialTheme.colorScheme.surface) },
+                        placeholder = { Text(text = "Пароль", color = MaterialTheme.colorScheme.onBackground) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Next
@@ -129,15 +132,15 @@ fun SignUpScreen(
                     Spacer(modifier = Modifier.height(15.dp))
                     OutlinedTextField(value = loginUiState.confirmPasswordSignUp, onValueChange = {loginViewModel.onConfirmPasswordChange(it)},
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = MaterialTheme.colorScheme.background,
-                            cursorColor = MaterialTheme.colorScheme.background,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.surface,
-                            focusedBorderColor = MaterialTheme.colorScheme.background,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.surface,
-                            focusedLabelColor = MaterialTheme.colorScheme.background
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            cursorColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                            focusedLabelColor = MaterialTheme.colorScheme.onBackground
                         ),
                         label = { Icon(imageVector = Icons.Rounded.Lock, contentDescription = null) },
-                        placeholder = { Text(text = "Повтори пароль", color = MaterialTheme.colorScheme.surface) },
+                        placeholder = { Text(text = "Повтори пароль", color = MaterialTheme.colorScheme.onBackground) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Done
@@ -153,7 +156,7 @@ fun SignUpScreen(
                             colorPalette[settingsViewModel.colorTheme.collectAsState().value!!].pairColors.second)
                     ))) {
                         Text(text = "стать частью", style = MaterialTheme.typography.displayLarge,
-                            color = MaterialTheme.colorScheme.background)
+                            color = MaterialTheme.colorScheme.onBackground)
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Text(text = "уже зареган?", modifier = Modifier
@@ -161,7 +164,7 @@ fun SignUpScreen(
                             goToLogin()
                         }
                         .padding(16.dp), style = MaterialTheme.typography.displayMedium, fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.background)
+                        color = MaterialTheme.colorScheme.onBackground)
                 }
             }
         }

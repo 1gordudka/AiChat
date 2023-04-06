@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.igordudka.aichat.R
 import com.igordudka.aichat.presentation.auth.LoginViewModel
 import com.igordudka.aichat.ui.theme.darkColorThemes
@@ -65,6 +66,8 @@ fun SettingsScreen(
 ) {
 
 
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setNavigationBarColor(MaterialTheme.colorScheme.background)
     val colorPalette = if (isDark) darkColorThemes else lightColorThemes
 
     Column(

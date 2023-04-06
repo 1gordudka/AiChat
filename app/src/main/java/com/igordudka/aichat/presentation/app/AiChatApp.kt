@@ -32,8 +32,7 @@ fun AiChatApp(
     val navHostController = rememberNavController()
     val startRoute = if (loginViewModel.hasUser) AppNavRoutes.HOME.name
     else AppNavRoutes.LOGIN.name
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setNavigationBarColor(MaterialTheme.colorScheme.background)
+
     Column(
         Modifier
             .fillMaxSize()

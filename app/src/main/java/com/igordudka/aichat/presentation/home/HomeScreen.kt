@@ -37,7 +37,7 @@ fun HomeScreen(
     }
     val context = LocalContext.current
     val mInterstitialAd = InterstitialAd(context)
-    mInterstitialAd.setAdUnitId("R-M-2302601-1")
+    mInterstitialAd.setAdUnitId("R-M-2307401-1")
     val adRequest = AdRequest.Builder().build()
     mInterstitialAd.setInterstitialAdEventListener(object : InterstitialAdEventListener {
         override fun onAdLoaded() {
@@ -76,7 +76,7 @@ fun HomeScreen(
                     Column(Modifier.fillMaxSize()) {
                         ChatScreen(isDark = isDark,
                         goToSettings = {
-                            //mInterstitialAd.loadAd(adRequest)
+                            mInterstitialAd.loadAd(adRequest)
                             currentScreen = "settings"
                         })
                     }

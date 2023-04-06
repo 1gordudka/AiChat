@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.igordudka.aichat.R
 import com.igordudka.aichat.presentation.home.settings.SettingsViewModel
 import com.igordudka.aichat.ui.theme.darkColorThemes
@@ -56,6 +57,8 @@ fun LoginScreen(
     goToSignUp: () -> Unit
 ) {
 
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setNavigationBarColor(MaterialTheme.colorScheme.background)
     val colorPalette = if (settingsViewModel.isDarkTheme.collectAsState().value == true) darkColorThemes
     else lightColorThemes
     val loginUiState = loginViewModel.loginUiState
@@ -96,21 +99,21 @@ fun LoginScreen(
                             )
                         )
                         .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "вход", color = MaterialTheme.colorScheme.background,
+                    Text(text = "вход", color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(top = 20.dp))
                     Spacer(modifier = Modifier.height(30.dp))
                     OutlinedTextField(value = loginUiState.userName, onValueChange = {loginViewModel.onUserNameChange(it)},
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = MaterialTheme.colorScheme.background,
-                            cursorColor = MaterialTheme.colorScheme.background,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.surface,
-                            focusedBorderColor = MaterialTheme.colorScheme.background,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.surface,
-                            focusedLabelColor = MaterialTheme.colorScheme.background
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            cursorColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                            focusedLabelColor = MaterialTheme.colorScheme.onBackground
                         ),
                         label = { Icon(imageVector = Icons.Rounded.Email, contentDescription = null)},
-                        placeholder = { Text(text = "Email", color = MaterialTheme.colorScheme.surface)},
+                        placeholder = { Text(text = "Email", color = MaterialTheme.colorScheme.onBackground)},
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
@@ -121,15 +124,15 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(15.dp))
                     OutlinedTextField(value = loginUiState.password, onValueChange = {loginViewModel.onPasswordNameChange(it)},
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = MaterialTheme.colorScheme.background,
-                            cursorColor = MaterialTheme.colorScheme.background,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.surface,
-                            focusedBorderColor = MaterialTheme.colorScheme.background,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.surface,
-                            focusedLabelColor = MaterialTheme.colorScheme.background
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            cursorColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                            focusedLabelColor = MaterialTheme.colorScheme.onBackground
                         ),
                         label = { Icon(imageVector = Icons.Rounded.Lock, contentDescription = null)},
-                        placeholder = { Text(text = "Пароль", color = MaterialTheme.colorScheme.surface)},
+                        placeholder = { Text(text = "Пароль", color = MaterialTheme.colorScheme.onBackground)},
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Done
@@ -142,7 +145,7 @@ fun LoginScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_remove_red_eye_24),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.background
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }
@@ -155,7 +158,7 @@ fun LoginScreen(
                         colorPalette[settingsViewModel.colorTheme.collectAsState().value!!].pairColors.second
                     )))) {
                         Text(text = "войти", style = MaterialTheme.typography.displayLarge,
-                            color = MaterialTheme.colorScheme.background)
+                            color = MaterialTheme.colorScheme.onBackground)
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Text(text = "еще не с нами?", modifier = Modifier
@@ -163,7 +166,7 @@ fun LoginScreen(
                             goToSignUp()
                         }
                         .padding(16.dp), style = MaterialTheme.typography.displayMedium, fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.background)
+                        color = MaterialTheme.colorScheme.onBackground)
                 }
             }
         }
