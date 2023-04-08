@@ -28,6 +28,11 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    val fontSize = userPreferencesRepository.fontSize.map { it }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        null
+    )
     var isDarkTheme = userPreferencesRepository.isDarkTheme.map { it }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -43,6 +48,11 @@ class SettingsViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(),
         null
     )
+    fun changeFontSize(value: Int){
+        viewModelScope.launch {
+            userPreferencesRepository.changeFont(value)
+        }
+    }
     fun setColorTheme(value: Int){
         viewModelScope.launch {
             userPreferencesRepository.changeTheme(value)

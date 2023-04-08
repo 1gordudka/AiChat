@@ -4,6 +4,9 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
@@ -31,6 +34,8 @@ class ChatViewModel @Inject constructor(
         getMessages()
     }
 
+    var isTyping by mutableStateOf(false)
+
 
     private var _messages = MutableStateFlow(emptyList<Map<String, Any>>().toMutableList())
     val messages: StateFlow<MutableList<Map<String, Any>>> = _messages
@@ -41,7 +46,7 @@ class ChatViewModel @Inject constructor(
             val simpleDateFormat = SimpleDateFormat("HH.mm")
             addMessage("user", message, simpleDateFormat.format(Date()),
                 Firebase.auth.currentUser?.uid.toString(), Date().time.seconds.toLong(DurationUnit.SECONDS))
-            var messageList = arrayListOf<Message>()
+            val messageList = arrayListOf<Message>()
             messageList.add(Message(message, "user"))
             val call = chatNetworkRepository.getMessage(request =
             ChatRequest(
@@ -49,6 +54,7 @@ class ChatViewModel @Inject constructor(
                 model = "gpt-3.5-turbo"
             )
             )
+            isTyping = !call.isExecuted
             val result = call.execute().body()?.choices?.get(0)?.message?.content
             addMessage("bot", result!!, simpleDateFormat.format(Date()), Firebase.auth.currentUser?.uid.toString(),
                 Date().time.seconds.toLong(DurationUnit.SECONDS))

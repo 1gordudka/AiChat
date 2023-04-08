@@ -10,6 +10,7 @@ import com.igordudka.aichat.auth.AuthRepository
 import com.igordudka.aichat.data.network.chat.ChatNetworkRepository
 import com.igordudka.aichat.data.network.OpenAIApiService
 import com.igordudka.aichat.data.preferences.UserPreferencesRepository
+import com.igordudka.aichat.presentation.home.settings.SettingsViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -64,5 +65,4 @@ class DataModule {
     fun provideAuthRepository() : AuthRepository{
         return AuthRepository()
     }
-
 }

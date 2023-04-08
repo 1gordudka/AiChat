@@ -1,9 +1,15 @@
 package com.igordudka.aichat.presentation.home.chat
 
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.Interaction
@@ -17,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -45,6 +52,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -52,6 +60,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.igordudka.aichat.data.database.ChatMessage
@@ -61,6 +70,11 @@ import kotlinx.coroutines.launch
 import java.util.*
 import com.igordudka.aichat.R
 import com.igordudka.aichat.presentation.home.settings.SettingsViewModel
+import com.yandex.mobile.ads.common.AdRequest
+import com.yandex.mobile.ads.common.AdRequestError
+import com.yandex.mobile.ads.common.ImpressionData
+import com.yandex.mobile.ads.interstitial.InterstitialAd
+import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -73,15 +87,44 @@ fun ChatScreen(
 ) {
 
 
+    val context = LocalContext.current
+    val mInterstitialAd = InterstitialAd(context)
+    mInterstitialAd.setAdUnitId("R-M-2307401-1")
+    val adRequest = AdRequest.Builder().build()
+    mInterstitialAd.setInterstitialAdEventListener(object : InterstitialAdEventListener {
+        override fun onAdLoaded() {
+            mInterstitialAd.show()
+        }
+        override fun onAdFailedToLoad(p0: AdRequestError) {
+            Log.w("FAIL", p0.toString())
+        }
+        override fun onAdShown() {
+
+        }
+        override fun onAdDismissed() {
+
+        }
+        override fun onAdClicked() {
+
+        }
+        override fun onLeftApplication() {
+
+        }
+        override fun onReturnedToApplication() {
+
+        }
+        override fun onImpression(p0: ImpressionData?) {
+
+        }
+
+    })
     val systemUiController = rememberSystemUiController()
     systemUiController.setNavigationBarColor(if (isDark) Color(0xFF161616) else Color(0xFFC6C6C6))
     val colorPalette = if (isDark) darkColorThemes else lightColorThemes
-    val context = LocalContext.current
     val messages by chatViewModel.messages.collectAsState()
     var value by rememberSaveable {
         mutableStateOf("")
     }
-    val keyboardController = LocalSoftwareKeyboardController.current
     var isAlertDialog by rememberSaveable {
         mutableStateOf(false)
     }
@@ -99,7 +142,7 @@ fun ChatScreen(
     var isKeyboardShown by rememberSaveable {
         mutableStateOf(false)
     }
-    if (messages != null) {
+    if (chatViewModel.isTyping) {
         isTyping = messages!!.isNotEmpty() && messages!!.last()["author"] == "user"
     }
 
@@ -151,7 +194,7 @@ fun ChatScreen(
                     if (messages != null) {
                         Column(Modifier.weight(9f)) {
                             MessagesList(messages = messages!!.reversed(), state = scrollState,
-                                colorPalette = colorPalette)
+                                colorPalette = colorPalette, isTyping = isTyping)
                         }
                     }
                     Column(
@@ -164,8 +207,8 @@ fun ChatScreen(
                         }, onDone = {
                             chatViewModel.onSendClicked(value, context = context)
                             value = ""
-                            coroutineScope.launch {
-                                scrollState.animateScrollToItem(0)
+                            if (messages.size % 7 == 0){
+                                mInterstitialAd.loadAd(adRequest)
                             }
                         }, colorPalette = colorPalette, onTextClick = {isKeyboardShown = true}, onDisFocus = {
                             isKeyboardShown = false
@@ -181,17 +224,13 @@ fun ChatScreen(
                     ){
                     Surface(
                         Modifier
-                            .padding(top = topPadding)
-                            .sizeIn(minWidth = 100.dp),
+                            .padding(top = topPadding),
                         shape = RoundedCornerShape(35.dp),
                         color = MaterialTheme.colorScheme.background,
                         tonalElevation = 6.dp
                     ) {
                         Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(12.dp)) {
-                            Text(text = if (isTyping) typing else stringResource(id = R.string.chat), style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.onBackground)
-                            Spacer(modifier = Modifier.width(mediumPadding))
                             IconButton(onClick = {
                                 isAlertDialog = true
                             }) {
@@ -245,82 +284,26 @@ fun ChatScreen(
 fun BotMessageCard(message: ChatMessage, colorPalette: List<ColorTheme>,
 settingsViewModel: SettingsViewModel = hiltViewModel()) {
 
+    val fontSize by settingsViewModel.fontSize.collectAsState()
     val haptic = LocalHapticFeedback.current
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-        Card(shape = RoundedCornerShape(21.dp), modifier = Modifier
-            .padding(mediumPadding)
-            .sizeIn(
-                minWidth = 180.dp, minHeight = 40.dp, maxWidth = 360.dp
-            )) {
-            Column(
-                Modifier
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                colorPalette[settingsViewModel.colorTheme.collectAsState().value!!].pairColors.first,
-                                colorPalette[settingsViewModel.colorTheme.collectAsState().value!!].pairColors.second
-                            )
-                        )
-                    )
-                    .combinedClickable(
-                        onDoubleClick = {
-                            clipboardManager.setText(AnnotatedString((message.message)))
-                            Toast
-                                .makeText(context, "Сообщение скорованно", Toast.LENGTH_SHORT)
-                                .show()
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        },
-                        onClick = {
-
-                        }
-                    )
-                    .sizeIn(
-                        minWidth = 180.dp, minHeight = 40.dp, maxWidth = 360.dp
-                    )
-                    .padding(standardPadding)) {
-                SelectionContainer {
-                    Text(text = message.message, style = MaterialTheme.typography.displayMedium,
-                        color = MaterialTheme.colorScheme.onSecondary, modifier = Modifier
-                            .padding(mediumPadding))
-                }
-                Column {
-                    Row(modifier = Modifier.sizeIn(
-                        minWidth = 180.dp, maxWidth = 360.dp
-                    ),
-                        horizontalArrangement = Arrangement.Start) {
-                        Text(text = message.time, style = MaterialTheme.typography.displaySmall,
-                            color = MaterialTheme.colorScheme.onBackground, modifier = Modifier
-                                .padding(
-                                    standardPadding
-                                ))
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun UserMessageCard(message: ChatMessage) {
-
-    val haptic = LocalHapticFeedback.current
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
-    val context = LocalContext.current
-
-    Box {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+    if (fontSize != null){
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
             Card(shape = RoundedCornerShape(21.dp), modifier = Modifier
                 .padding(mediumPadding)
                 .sizeIn(
-                    minWidth = 180.dp, minHeight = 40.dp, maxWidth = 360.dp
+                    minWidth = 180.dp, minHeight = 25.dp, maxWidth = 320.dp
                 )) {
                 Column(
                     Modifier
                         .background(
-                            color = MaterialTheme.colorScheme.surface
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    colorPalette[settingsViewModel.colorTheme.collectAsState().value!!].pairColors.first,
+                                    colorPalette[settingsViewModel.colorTheme.collectAsState().value!!].pairColors.second
+                                )
+                            )
                         )
                         .combinedClickable(
                             onDoubleClick = {
@@ -334,24 +317,88 @@ fun UserMessageCard(message: ChatMessage) {
 
                             }
                         )
-                        .padding(standardPadding)
                         .sizeIn(
-                            minWidth = 180.dp, minHeight = 40.dp, maxWidth = 360.dp
-                        )) {
-                    SelectionContainer() {
+                            minWidth = 180.dp, minHeight = 25.dp, maxWidth = 320.dp
+                        )
+                        .padding(standardPadding)) {
+                    SelectionContainer {
                         Text(text = message.message, style = MaterialTheme.typography.displayMedium,
                             color = MaterialTheme.colorScheme.onSecondary, modifier = Modifier
-                                .padding(mediumPadding))
+                                .padding(mediumPadding), fontSize = fontSizes[fontSize!!].sp)
                     }
-                    Row(modifier = Modifier.sizeIn(
-                        minWidth = 180.dp, maxWidth = 360.dp
-                    ),
-                        horizontalArrangement = Arrangement.Start) {
-                        Text(text = message.time, style = MaterialTheme.typography.displaySmall,
-                            color = MaterialTheme.colorScheme.onSurface, modifier = Modifier
-                                .padding(
-                                    standardPadding
-                                ))
+                    Column {
+                        Row(modifier = Modifier.sizeIn(
+                            minWidth = 180.dp, maxWidth = 360.dp
+                        ),
+                            horizontalArrangement = Arrangement.Start) {
+                            Text(text = message.time, style = MaterialTheme.typography.displaySmall,
+                                color = MaterialTheme.colorScheme.onBackground, modifier = Modifier
+                                    .padding(
+                                        standardPadding
+                                    )
+                                    .alpha(0.7f))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun UserMessageCard(message: ChatMessage, settingsViewModel: SettingsViewModel = hiltViewModel()) {
+
+    val fontSize by settingsViewModel.fontSize.collectAsState()
+    val haptic = LocalHapticFeedback.current
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+
+    if (fontSize != null){
+        Box {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                Card(shape = RoundedCornerShape(21.dp), modifier = Modifier
+                    .padding(mediumPadding)
+                    .sizeIn(
+                        minWidth = 180.dp, minHeight = 25.dp, maxWidth = 320.dp
+                    )) {
+                    Column(
+                        Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.surface
+                            )
+                            .combinedClickable(
+                                onDoubleClick = {
+                                    clipboardManager.setText(AnnotatedString((message.message)))
+                                    Toast
+                                        .makeText(context, "Сообщение скорованно", Toast.LENGTH_SHORT)
+                                        .show()
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                },
+                                onClick = {
+
+                                }
+                            )
+                            .padding(standardPadding)
+                            .sizeIn(
+                                minWidth = 180.dp, minHeight = 25.dp, maxWidth = 320.dp
+                            )) {
+                        SelectionContainer() {
+                            Text(text = message.message, style = MaterialTheme.typography.displayMedium,
+                                color = MaterialTheme.colorScheme.onSecondary, modifier = Modifier
+                                    .padding(mediumPadding), fontSize = fontSizes[fontSize!!].sp)
+                        }
+                        Row(modifier = Modifier.sizeIn(
+                            minWidth = 180.dp, maxWidth = 360.dp
+                        ),
+                            horizontalArrangement = Arrangement.Start) {
+                            Text(text = message.time, style = MaterialTheme.typography.displaySmall,
+                                color = MaterialTheme.colorScheme.onSurface, modifier = Modifier
+                                    .padding(
+                                        standardPadding
+                                    )
+                                    .alpha(0.7f))
+                        }
                     }
                 }
             }
@@ -363,10 +410,18 @@ fun UserMessageCard(message: ChatMessage) {
 fun MessagesList(
     messages: List<Map<String, Any>>,
     state: LazyListState,
+    isTyping: Boolean,
     colorPalette: List<ColorTheme>
 ) {
     Column(Modifier.padding(smallPadding)) {
         LazyColumn(state = state, reverseLayout = true){
+            item() {
+                if (isTyping){
+                    Row(Modifier.padding(16.dp)) {
+                        DotsTyping(colorPalette = colorPalette)
+                    }
+                }
+            }
             items(
                 messages,
                 key = {it}
@@ -400,10 +455,11 @@ fun MessageTextField(
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
 
-    val focusManager = LocalFocusManager.current
     val source = remember {
         MutableInteractionSource()
     }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val isVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     LaunchedEffect(key1 = isVisible) {
@@ -439,9 +495,14 @@ fun MessageTextField(
                 cursorColor = MaterialTheme.colorScheme.onBackground,
             focusedIndicatorColor =  Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent),
-        textStyle = MaterialTheme.typography.displayMedium)
+        textStyle = MaterialTheme.typography.displayLarge)
         IconButton(onClick = {
-            onDone(value) }) {
+            if (keyboardController != null) {
+                keyboardController.hide()
+            }
+            if (value != ""){
+                onDone(value)}
+        }) {
             Image(
                 imageVector = ImageVector.vectorResource(id =
                 colorPalette[settingsViewModel.colorTheme.collectAsState().value!!].sendIcon),
@@ -451,3 +512,58 @@ fun MessageTextField(
         }
     }
 }
+
+@Composable
+fun DotsTyping(
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    colorPalette: List<ColorTheme>
+) {
+    val maxOffset = 10f
+    @Composable
+    fun Dot(
+        offset: Float
+    ) = Spacer(
+        Modifier
+            .size(18.dp)
+            .offset(y = -offset.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    listOf(
+                        colorPalette[settingsViewModel.colorTheme.collectAsState().value!!].pairColors.first,
+                        colorPalette[settingsViewModel.colorTheme.collectAsState().value!!].pairColors.second
+                    )
+                ),
+                shape = CircleShape
+            )
+    )
+    val infiniteTransition = rememberInfiniteTransition()
+    @Composable
+    fun animateOffsetWithDelay(delay: Int) = infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 150 * 4
+                0f at delay with LinearEasing
+                maxOffset at delay + 150 with LinearEasing
+                0f at delay + 150 * 2
+            }
+        )
+    )
+    val offset1 by animateOffsetWithDelay(0)
+    val offset2 by animateOffsetWithDelay(150)
+    val offset3 by animateOffsetWithDelay(150 * 2)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(top = maxOffset.dp)
+    ) {
+        val spaceSize = 2.dp
+        Dot(offset1)
+        Spacer(Modifier.width(spaceSize))
+        Dot(offset2)
+        Spacer(Modifier.width(spaceSize))
+        Dot(offset3)
+    }
+}
+
