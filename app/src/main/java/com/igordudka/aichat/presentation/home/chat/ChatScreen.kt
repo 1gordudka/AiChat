@@ -86,38 +86,7 @@ fun ChatScreen(
     goToSettings: () -> Unit
 ) {
 
-
     val context = LocalContext.current
-    val mInterstitialAd = InterstitialAd(context)
-    mInterstitialAd.setAdUnitId("R-M-2307401-1")
-    val adRequest = AdRequest.Builder().build()
-    mInterstitialAd.setInterstitialAdEventListener(object : InterstitialAdEventListener {
-        override fun onAdLoaded() {
-            mInterstitialAd.show()
-        }
-        override fun onAdFailedToLoad(p0: AdRequestError) {
-            Log.w("FAIL", p0.toString())
-        }
-        override fun onAdShown() {
-
-        }
-        override fun onAdDismissed() {
-
-        }
-        override fun onAdClicked() {
-
-        }
-        override fun onLeftApplication() {
-
-        }
-        override fun onReturnedToApplication() {
-
-        }
-        override fun onImpression(p0: ImpressionData?) {
-
-        }
-
-    })
     val systemUiController = rememberSystemUiController()
     systemUiController.setNavigationBarColor(if (isDark) Color(0xFF161616) else Color(0xFFC6C6C6))
     val colorPalette = if (isDark) darkColorThemes else lightColorThemes
@@ -130,21 +99,18 @@ fun ChatScreen(
     }
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
-    var typing by rememberSaveable {
-        mutableStateOf("Печатает")
-    }
-    var isTyping by rememberSaveable {
-        mutableStateOf(false)
-    }
     val density = LocalDensity.current;
     val configuration = LocalConfiguration.current;
     val screenHeightPx = with(density) {configuration.screenHeightDp.dp.roundToPx()}
     var isKeyboardShown by rememberSaveable {
         mutableStateOf(false)
     }
-    if (chatViewModel.isTyping) {
-        isTyping = messages!!.isNotEmpty() && messages!!.last()["author"] == "user"
+    val focusManager = LocalFocusManager.current
+
+    coroutineScope.launch {
+        scrollState.animateScrollToItem(0)
     }
+
 
     val topPadding: Dp by animateDpAsState(
         if (!isKeyboardShown) {
@@ -153,30 +119,11 @@ fun ChatScreen(
             (screenHeightPx / 7.5).dp
         }
     )
-
-    coroutineScope.launch {
-        scrollState.animateScrollToItem(0)
-    }
-    if (isTyping){
-        LaunchedEffect(key1 = Unit){
-            while (true){
-                typing = "Печатает"
-                delay(300)
-                typing = "Печатает."
-                delay(300)
-                typing = "Печатает.."
-                delay(300)
-                typing = "Печатает..."
-                delay(300)
-            }
-        }
-    }
-
-
         if (settingsViewModel.colorTheme.collectAsState().value != null){
             Box(
                 Modifier
                     .fillMaxSize()
+                    .navigationBarsPadding()
                     .background(
                         Brush.verticalGradient(
                             listOf(
@@ -194,7 +141,7 @@ fun ChatScreen(
                     if (messages != null) {
                         Column(Modifier.weight(9f)) {
                             MessagesList(messages = messages!!.reversed(), state = scrollState,
-                                colorPalette = colorPalette, isTyping = isTyping)
+                                colorPalette = colorPalette, isTyping = chatViewModel.isTyping.collectAsState().value)
                         }
                     }
                     Column(
@@ -207,9 +154,7 @@ fun ChatScreen(
                         }, onDone = {
                             chatViewModel.onSendClicked(value, context = context)
                             value = ""
-                            if (messages.size % 7 == 0){
-                                mInterstitialAd.loadAd(adRequest)
-                            }
+                            focusManager.clearFocus()
                         }, colorPalette = colorPalette, onTextClick = {isKeyboardShown = true}, onDisFocus = {
                             isKeyboardShown = false
                         })
@@ -371,7 +316,11 @@ fun UserMessageCard(message: ChatMessage, settingsViewModel: SettingsViewModel =
                                 onDoubleClick = {
                                     clipboardManager.setText(AnnotatedString((message.message)))
                                     Toast
-                                        .makeText(context, "Сообщение скорованно", Toast.LENGTH_SHORT)
+                                        .makeText(
+                                            context,
+                                            "Сообщение скорованно",
+                                            Toast.LENGTH_SHORT
+                                        )
                                         .show()
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 },
@@ -497,9 +446,6 @@ fun MessageTextField(
                 unfocusedIndicatorColor = Color.Transparent),
         textStyle = MaterialTheme.typography.displayLarge)
         IconButton(onClick = {
-            if (keyboardController != null) {
-                keyboardController.hide()
-            }
             if (value != ""){
                 onDone(value)}
         }) {

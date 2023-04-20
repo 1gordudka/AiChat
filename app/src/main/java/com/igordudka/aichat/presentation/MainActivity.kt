@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
 import com.igordudka.aichat.presentation.app.AiChatApp
@@ -34,6 +35,7 @@ class MainActivity : ComponentActivity() {
                 settingsViewModel.isLoading.value
             }
         }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         setContent {
             Column(

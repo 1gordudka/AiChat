@@ -8,6 +8,7 @@
 
     <application
         android:name=".di.AiChatApp"
+        android:enableOnBackInvokedCallback="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,7 +16,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Starting"
-        tools:targetApi="31">
+        tools:targetApi="tiramisu">
         <activity
             android:name="com.igordudka.aichat.presentation.MainActivity"
             android:windowSoftInputMode="stateVisible"

@@ -1,12 +1,11 @@
 package com.igordudka.aichat.presentation.home.chat
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
@@ -14,11 +13,15 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.igordudka.aichat.data.network.chat.ChatNetworkRepository
 import com.igordudka.aichat.data.network.chat.ChatRequest
+import com.igordudka.aichat.data.network.chat.ChatResponse
 import com.igordudka.aichat.data.network.chat.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import okhttp3.Response
+import okhttp3.sse.EventSource
+import okhttp3.sse.EventSourceListener
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -34,7 +37,7 @@ class ChatViewModel @Inject constructor(
         getMessages()
     }
 
-    var isTyping by mutableStateOf(false)
+    var isTyping = MutableStateFlow(false)
 
 
     private var _messages = MutableStateFlow(emptyList<Map<String, Any>>().toMutableList())
@@ -48,16 +51,14 @@ class ChatViewModel @Inject constructor(
                 Firebase.auth.currentUser?.uid.toString(), Date().time.seconds.toLong(DurationUnit.SECONDS))
             val messageList = arrayListOf<Message>()
             messageList.add(Message(message, "user"))
-            val call = chatNetworkRepository.getMessage(request =
-            ChatRequest(
-                messageList,
-                model = "gpt-3.5-turbo"
+            val call = chatNetworkRepository.getMessage(
+                ChatRequest(messages = messageList)
             )
-            )
-            isTyping = !call.isExecuted
+            isTyping = MutableStateFlow(!call.isExecuted)
             val result = call.execute().body()?.choices?.get(0)?.message?.content
-            addMessage("bot", result!!, simpleDateFormat.format(Date()), Firebase.auth.currentUser?.uid.toString(),
-                Date().time.seconds.toLong(DurationUnit.SECONDS))
+            isTyping = MutableStateFlow(!call.isExecuted)
+            addMessage("bot", result!!, simpleDateFormat.format(Date()),
+                Firebase.auth.currentUser?.uid.toString(), Date().time.seconds.toLong(DurationUnit.SECONDS))
         }
     }
 

@@ -1,17 +1,15 @@
 package com.igordudka.aichat.data.network.chat
 
-import com.google.gson.annotations.SerializedName
 
 data class ChatRequest(
-    @SerializedName("messages")
+    val model: String = "gpt-3.5-turbo",
     val messages: List<Message>,
-    @SerializedName("model")
-    val model: String,
+    val max_tokens: Int = 3000,
+    val stream: Boolean = false,
+    val temperature: Double = 0.6,
 )
 
 data class Message(
-    @SerializedName("content")
     val content: String,
-    @SerializedName("role")
     val role: String
 )

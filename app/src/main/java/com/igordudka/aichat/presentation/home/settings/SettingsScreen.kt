@@ -1,9 +1,7 @@
 package com.igordudka.aichat.presentation.home.settings
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,15 +20,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Slider
-import androidx.compose.material.SliderDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,18 +33,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.igordudka.aichat.R
@@ -63,18 +59,10 @@ import com.igordudka.aichat.ui.theme.extraPadding
 import com.igordudka.aichat.ui.theme.fontSizes
 import com.igordudka.aichat.ui.theme.lightColorThemes
 import com.igordudka.aichat.ui.theme.standardPadding
-import com.yandex.mobile.ads.common.AdRequest
-import com.yandex.mobile.ads.common.AdRequestError
-import com.yandex.mobile.ads.common.ImpressionData
-import com.yandex.mobile.ads.interstitial.InterstitialAd
-import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
-import com.yandex.mobile.ads.nativeads.NativeAd
-import com.yandex.mobile.ads.nativeads.NativeAdLoadListener
-import com.yandex.mobile.ads.nativeads.NativeAdLoader
 import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
 import com.yandex.mobile.ads.nativeads.template.NativeBannerView
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SettingsScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
@@ -97,25 +85,32 @@ fun SettingsScreen(
                 .statusBarsPadding()
                 .padding(top = 10.dp)
                 .height(70.dp)
-                .background(MaterialTheme.colorScheme.background),) {
+                .background(MaterialTheme.colorScheme.background),
+        ) {
             IconButton(onClick = { goToChat() }, modifier = Modifier.align(Alignment.CenterStart)) {
-                Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(50.dp))
+                Icon(
+                    imageVector = Icons.Rounded.ArrowBack, contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(50.dp)
+                )
             }
-            Text(text = stringResource(id = R.string.settings), style = MaterialTheme.typography.labelLarge,
+            Text(
+                text = stringResource(id = R.string.settings),
+                style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.align(Alignment.Center))
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
-    }) {
+    }) { paddingValues ->
         LazyColumn(
             Modifier
                 .fillMaxSize()
-                .padding(it)
-                .background(MaterialTheme.colorScheme.background)) {
-            item{
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            item {
                 Spacer(modifier = Modifier.height(extraPadding))
                 Column {
-                    if (settingsViewModel.asSystem.collectAsState().value == false){
+                    if (settingsViewModel.asSystem.collectAsState().value == false) {
                         settingsViewModel.isDarkTheme.collectAsState().value?.let {
                             SettingsItemCard(
                                 name = R.string.dark_theme,
@@ -139,17 +134,20 @@ fun SettingsScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(standardPadding))
-                    Card(modifier = Modifier
-                        .fillMaxWidth()
-                        .sizeIn(minHeight = 75.dp)
-                        .padding(extraPadding)
-                        .clickable {
-                            loginViewModel.signout()
-                            goToLogin()
-                        },
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .sizeIn(minHeight = 75.dp)
+                            .padding(extraPadding)
+                            .clickable {
+                                loginViewModel.signout()
+                                goToLogin()
+                            },
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor =
-                        MaterialTheme.colorScheme.surface)
+                        colors = CardDefaults.cardColors(
+                            containerColor =
+                            MaterialTheme.colorScheme.surface
+                        )
                     ) {
                         Row(
                             Modifier
@@ -178,16 +176,20 @@ fun SettingsScreen(
                     }
                 }
                 Spacer(modifier = Modifier.height(15.dp))
-                Text(text = "Выбор темы", style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(20.dp), color = MaterialTheme.colorScheme.onBackground)
+                Text(
+                    text = "Выбор темы",
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(20.dp),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
                 LazyRow() {
                     items(
                         colorPalette
-                    ){
+                    ) {
                         Spacer(modifier = Modifier.width(10.dp))
-                        Box{
-                            if (settingsViewModel.colorTheme.collectAsState().value != null){
-                                if (colorPalette.indexOf(it) == settingsViewModel.colorTheme.collectAsState().value){
+                        Box {
+                            if (settingsViewModel.colorTheme.collectAsState().value != null) {
+                                if (colorPalette.indexOf(it) == settingsViewModel.colorTheme.collectAsState().value) {
                                     Row(
                                         Modifier
                                             .clip(RoundedCornerShape(25.dp))
@@ -195,7 +197,8 @@ fun SettingsScreen(
                                                 MaterialTheme.colorScheme.onBackground
                                             )
                                             .size(115.dp)
-                                            .align(Alignment.Center)) {}
+                                            .align(Alignment.Center)
+                                    ) {}
                                 }
                             }
                             Row(
@@ -219,41 +222,52 @@ fun SettingsScreen(
                     }
                 }
                 Column(Modifier.padding(16.dp)) {
-                    Text(text = "Размер шрифта", style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(4.dp), color = MaterialTheme.colorScheme.onBackground)
-                    if (fontSize != null){
-                        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Размер шрифта",
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(4.dp),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    if (fontSize != null) {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Text(
                                 text = fontSizes[fontSize].toString(),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onBackground,
                             )
                         }
-                        Slider(value = fontSize!!.toFloat(), onValueChange = {
-                            settingsViewModel.changeFontSize(it.toInt())
-                        }, steps = fontSizes.size - 2, valueRange = 0f..fontSizes.size.toFloat() - 1,
-                            colors = SliderDefaults.colors(
-                                thumbColor = MaterialTheme.colorScheme.onBackground,
-                                disabledThumbColor = MaterialTheme.colorScheme.onBackground,
-                                activeTickColor = MaterialTheme.colorScheme.surface,
-                                inactiveTickColor = MaterialTheme.colorScheme.onSurface,
-                                activeTrackColor = MaterialTheme.colorScheme.onBackground,
-                                inactiveTrackColor = MaterialTheme.colorScheme.surface
+                            SlidingBar(
+                                value = fontSize.toFloat(), onValueChanged = {
+                                    settingsViewModel.changeFontSize(it.toInt())
+                                                                             },
+                                modifier = Modifier.fillMaxWidth().height(30.dp).padding(12.dp),
+                                colors = SlidingBarDefaults.colors(
+                                    colorTrack = MaterialTheme.colorScheme.onBackground,
+                                    colorPrimary = MaterialTheme.colorScheme.onBackground
 
-                            ))
-                        BotMessageCard(message = ChatMessage(message = "Так будет выглядеть " +
-                                "сообщение бота", time = "9.41"), colorPalette = colorPalette)
-                        UserMessageCard(message = ChatMessage(message = "Так будет выглядеть " +
-                                "ваше сообщение", time = "9.41"))
+                                ), stepSize = 1f, valueRange = 0f..fontSizes.size.toFloat() - 1
+                            )
+                        BotMessageCard(
+                            message = ChatMessage(
+                                message = "Так будет выглядеть " +
+                                        "сообщение бота", time = "9.41"
+                            ), colorPalette = colorPalette
+                        )
+                        UserMessageCard(
+                            message = ChatMessage(
+                                message = "Так будет выглядеть " +
+                                        "ваше сообщение", time = "9.41"
+                            )
+                        )
                     }
                 }
             }
         }
     }
-
 }
-
-
 @Composable
 fun SettingsItemCard(
     name: Int,

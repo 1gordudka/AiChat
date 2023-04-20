@@ -75,7 +75,8 @@ fun MyLoveTheme(
     else settingsViewModel.isDarkTheme.collectAsState().value == true,
     content: @Composable () -> Unit
 ) {
-
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = !darkTheme)
     val colorScheme = when {
         darkTheme -> DarkColorScheme
         else -> LightColorScheme

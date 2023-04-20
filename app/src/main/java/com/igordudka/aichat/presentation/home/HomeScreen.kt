@@ -25,7 +25,6 @@ import com.yandex.mobile.ads.interstitial.InterstitialAd
 import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     goToLogin: () -> Unit,
@@ -36,36 +35,6 @@ fun HomeScreen(
         mutableStateOf("chat")
     }
     val context = LocalContext.current
-    val mInterstitialAd = InterstitialAd(context)
-    mInterstitialAd.setAdUnitId("R-M-2307401-1")
-    val adRequest = AdRequest.Builder().build()
-    mInterstitialAd.setInterstitialAdEventListener(object : InterstitialAdEventListener {
-        override fun onAdLoaded() {
-            mInterstitialAd.show()
-        }
-        override fun onAdFailedToLoad(p0: AdRequestError) {
-            Log.w("FAIL", p0.toString())
-        }
-        override fun onAdShown() {
-
-        }
-        override fun onAdDismissed() {
-
-        }
-        override fun onAdClicked() {
-
-        }
-        override fun onLeftApplication() {
-
-        }
-        override fun onReturnedToApplication() {
-
-        }
-        override fun onImpression(p0: ImpressionData?) {
-
-        }
-
-    })
 
 
             Column(
@@ -76,7 +45,6 @@ fun HomeScreen(
                     Column(Modifier.fillMaxSize()) {
                         ChatScreen(isDark = isDark,
                         goToSettings = {
-                            mInterstitialAd.loadAd(adRequest)
                             currentScreen = "settings"
                         })
                     }
