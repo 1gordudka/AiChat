@@ -51,7 +51,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.igordudka.aichat.R
 import com.igordudka.aichat.data.database.ChatMessage
-import com.igordudka.aichat.presentation.auth.LoginViewModel
 import com.igordudka.aichat.presentation.home.chat.BotMessageCard
 import com.igordudka.aichat.presentation.home.chat.UserMessageCard
 import com.igordudka.aichat.ui.theme.darkColorThemes
@@ -59,16 +58,12 @@ import com.igordudka.aichat.ui.theme.extraPadding
 import com.igordudka.aichat.ui.theme.fontSizes
 import com.igordudka.aichat.ui.theme.lightColorThemes
 import com.igordudka.aichat.ui.theme.standardPadding
-import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
-import com.yandex.mobile.ads.nativeads.template.NativeBannerView
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SettingsScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
-    loginViewModel: LoginViewModel = hiltViewModel(),
     isDark: Boolean,
-    goToLogin: () -> Unit,
     goToChat: () -> Unit
 ) {
 
@@ -134,46 +129,6 @@ fun SettingsScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(standardPadding))
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .sizeIn(minHeight = 75.dp)
-                            .padding(extraPadding)
-                            .clickable {
-                                loginViewModel.signout()
-                                goToLogin()
-                            },
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor =
-                            MaterialTheme.colorScheme.surface
-                        )
-                    ) {
-                        Row(
-                            Modifier
-                                .sizeIn(minHeight = 75.dp)
-                                .fillMaxWidth()
-                                .padding(extraPadding),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(
-                                Modifier.weight(1f),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.logout),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Image(
-                                    painter = painterResource(id = R.drawable.logout),
-                                    contentDescription = null,
-                                    Modifier.size(35.dp)
-                                )
-                            }
-                        }
-                    }
                 }
                 Spacer(modifier = Modifier.height(15.dp))
                 Text(

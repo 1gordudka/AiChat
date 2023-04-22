@@ -70,11 +70,6 @@ import kotlinx.coroutines.launch
 import java.util.*
 import com.igordudka.aichat.R
 import com.igordudka.aichat.presentation.home.settings.SettingsViewModel
-import com.yandex.mobile.ads.common.AdRequest
-import com.yandex.mobile.ads.common.AdRequestError
-import com.yandex.mobile.ads.common.ImpressionData
-import com.yandex.mobile.ads.interstitial.InterstitialAd
-import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -86,7 +81,6 @@ fun ChatScreen(
     goToSettings: () -> Unit
 ) {
 
-    val context = LocalContext.current
     val systemUiController = rememberSystemUiController()
     systemUiController.setNavigationBarColor(if (isDark) Color(0xFF161616) else Color(0xFFC6C6C6))
     val colorPalette = if (isDark) darkColorThemes else lightColorThemes
@@ -152,7 +146,7 @@ fun ChatScreen(
                         MessageTextField(value = value, onValueChange = {
                             value = it
                         }, onDone = {
-                            chatViewModel.onSendClicked(value, context = context)
+                            chatViewModel.onSendClicked(value)
                             value = ""
                             focusManager.clearFocus()
                         }, colorPalette = colorPalette, onTextClick = {isKeyboardShown = true}, onDisFocus = {
@@ -357,7 +351,7 @@ fun UserMessageCard(message: ChatMessage, settingsViewModel: SettingsViewModel =
 
 @Composable
 fun MessagesList(
-    messages: List<Map<String, Any>>,
+    messages: List<ChatMessage>,
     state: LazyListState,
     isTyping: Boolean,
     colorPalette: List<ColorTheme>
@@ -372,16 +366,15 @@ fun MessagesList(
                 }
             }
             items(
-                messages,
-                key = {it}
+                messages
             ){
-                if (it["author"] == "bot"){
-                    BotMessageCard(message = ChatMessage(author = it["author"] as String, message = it["message"] as String,
-                        time = it["time"] as String,), colorPalette = colorPalette)
+                if (it.author == "bot"){
+                    BotMessageCard(message = ChatMessage(author = it.author, message = it.message,
+                        time = it.time,), colorPalette = colorPalette)
                 }
-                else if(it["author"] == "user"){
-                    UserMessageCard(message = ChatMessage(author = it["author"] as String, message = it["message"] as String,
-                        time = it["time"] as String,))
+                else if(it.author == "user"){
+                    UserMessageCard(message = ChatMessage(author = it.author, message = it.message,
+                        time = it.time,))
                 }
             }
 
@@ -407,8 +400,6 @@ fun MessageTextField(
     val source = remember {
         MutableInteractionSource()
     }
-
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     val isVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     LaunchedEffect(key1 = isVisible) {

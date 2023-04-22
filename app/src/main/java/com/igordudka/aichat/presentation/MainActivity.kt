@@ -14,11 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.initialize
 import com.igordudka.aichat.presentation.app.AiChatApp
-import com.igordudka.aichat.presentation.home.chat.ChatScreen
-import com.igordudka.aichat.presentation.home.settings.SettingsScreen
 import com.igordudka.aichat.presentation.home.settings.SettingsViewModel
 import com.igordudka.aichat.ui.theme.MyLoveTheme
 import dagger.hilt.android.AndroidEntryPoint

@@ -6,7 +6,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.GsonBuilder
-import com.igordudka.aichat.auth.AuthRepository
+import com.igordudka.aichat.data.database.MessageDatabase
+import com.igordudka.aichat.data.database.OfflineChatRepository
 import com.igordudka.aichat.data.network.chat.ChatNetworkRepository
 import com.igordudka.aichat.data.network.OpenAIApiService
 import com.igordudka.aichat.data.preferences.UserPreferencesRepository
@@ -62,7 +63,7 @@ class DataModule {
     }
 
     @Provides
-    fun provideAuthRepository() : AuthRepository{
-        return AuthRepository()
+    fun provideOfflineChatRepository(@ApplicationContext context: Context) : OfflineChatRepository{
+        return OfflineChatRepository(MessageDatabase.getDatabase(context).messageDao())
     }
 }
